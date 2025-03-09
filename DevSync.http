@@ -1,0 +1,6 @@
+@DevSync_HostAddress = http://localhost:5082
+
+GET {{DevSync_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
