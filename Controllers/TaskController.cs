@@ -2,7 +2,6 @@ using DevSync.Interfaces.Services;
 using DevSync.Models;
 using DevSync.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevSync.Controllers;
@@ -28,8 +27,6 @@ public class TaskController : Controller
     [Authorize]
     public async Task<IActionResult> AddTask([FromBody] TaskItemCreateDTO taskItemCreateDto, Guid projectId)
     {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
-        
         var project  = await _projectService.GetProjectById(projectId);
         if (project == null) return NotFound(new { Message = "Project not found." });
         
@@ -42,7 +39,7 @@ public class TaskController : Controller
         };
 
         var createdTask = await _taskService.CreateTask(task);
-        return Ok(new TaskItemResponseDTO
+        return CreatedAtAction(nameof(Show), new { id = createdTask.Id } ,new TaskItemResponseDTO
         {
             Id = createdTask.Id,
             Title = createdTask.Title,
@@ -82,8 +79,13 @@ public class TaskController : Controller
 
         if (!validation.IsValid) return validation.ErrorResult!;
 
-        await _taskService.UpdateTask(validation.Value!);
-        return Ok();
+        var updateTask = await _taskService.UpdateTask(validation.Value!);
+        return Ok(new {
+            id = updateTask.Id, 
+            status = updateTask.Status,  
+            title = updateTask.Title,  
+            description = updateTask.Description
+        });
     }
 
     [HttpDelete("{id:guid}")]

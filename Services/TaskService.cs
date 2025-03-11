@@ -43,7 +43,7 @@ public class TaskService(ITaskRepository taskRepository, IProjectService project
             if (uid is null)
                 return ValidationResult<TaskItem>.Failure(new UnauthorizedResult());
         
-            var hasAccess = await projectService.UserHasAccessToProject(uid.Value, taskId);
+            var hasAccess = await projectService.UserHasAccessToProject(uid.Value, task.ProjectId);
             return hasAccess
                 ? ValidationResult<TaskItem>.Success(task)
                 : ValidationResult<TaskItem>.Failure(new UnauthorizedResult());
