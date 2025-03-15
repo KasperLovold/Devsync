@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devsync
+  labels:
+    app: devsync
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devsync
+  template:
+    metadata:
+      labels:
+        app: devsync
+    spec:
+      containers:
+        - name: devsync
+          image: devsync:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Host=postgres-service;Port=5432;Database=devsync;Username=devuser;Password=devpassword"

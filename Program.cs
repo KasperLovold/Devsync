@@ -36,7 +36,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(@"Server=127.0.0.1; Port=5432; Database=devsyncdb; User Id = devsync; Password = DevSync;"));
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(@"Server=127.0.0.1; Port=5432; Database=devsyncdb; User Id = devsync; Password = DevSync;"));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -48,6 +51,12 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
