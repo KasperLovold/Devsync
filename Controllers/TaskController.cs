@@ -77,17 +77,20 @@ public class TaskController : Controller
         var userId = _claimsService.GetUserId();
         var validation = await _taskService.ValidateTaskUpdate(id, userId, item);
 
-        if (!validation.IsValid) return validation.ErrorResult!;
-
-        var updateTask = await _taskService.UpdateTask(validation.Value!);
-        return Ok(new {
-            id = updateTask.Id, 
-            status = updateTask.Status,  
-            title = updateTask.Title,  
-            description = updateTask.Description
-        });
+        return await validation.Match<Task<IActionResult>>(
+            async validTask => {
+                var updateTask = await _taskService.UpdateTask(validTask);
+                return Ok(new {
+                    id = updateTask.Id,
+                    title = updateTask.Title,
+                    status = updateTask.Status,
+                    description = updateTask.Description,
+                });
+            }, 
+            Task.FromResult
+        );
     }
-
+    
     [HttpDelete("{id:guid}")]
     [Authorize]
     public async Task<IActionResult> DeleteTask(Guid id)

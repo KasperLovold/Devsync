@@ -34,19 +34,19 @@ public class TaskService(ITaskRepository taskRepository, IProjectService project
         {
             var task = await GetTaskById(id);
             return task != null 
-                ? ValidationResult<TaskItem>.Success(task)
-                : ValidationResult<TaskItem>.Failure(new NotFoundObjectResult(new { Message = "Task not found." }));
+                ? ValidationResult<TaskItem>.FromValue(task)
+                : ValidationResult<TaskItem>.FromError(new NotFoundObjectResult(new { Message = "Task not found." }));
         }
 
         async Task<ValidationResult<TaskItem>> ValidateUserAccess(TaskItem task, int? uid)
         {
             if (uid is null)
-                return ValidationResult<TaskItem>.Failure(new UnauthorizedResult());
-        
+                return ValidationResult<TaskItem>.FromError(new UnauthorizedResult());
+    
             var hasAccess = await projectService.UserHasAccessToProject(uid.Value, task.ProjectId);
             return hasAccess
-                ? ValidationResult<TaskItem>.Success(task)
-                : ValidationResult<TaskItem>.Failure(new UnauthorizedResult());
+                ? ValidationResult<TaskItem>.FromValue(task)
+                : ValidationResult<TaskItem>.FromError(new UnauthorizedResult());
         }
 
         async Task<ValidationResult<TaskItem>> UpdateTaskProperties(TaskItem task, TaskItemUpdateDTO updateDto)
@@ -54,14 +54,13 @@ public class TaskService(ITaskRepository taskRepository, IProjectService project
             task.Title = updateDto.Title;
             task.Description = updateDto.Description;
             task.Status = updateDto.Status;
-    
+
             if (updateDto.Assignee.HasValue)
             {
                 task.Assignee = await userService.FindUserByIdAsync(updateDto.Assignee.Value);
             }
-    
-            return ValidationResult<TaskItem>.Success(task);
+
+            return ValidationResult<TaskItem>.FromValue(task);
         }
-    }
-    
+    }    
 }
