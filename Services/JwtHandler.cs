@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using DevSync.Interfaces;
 using DevSync.Interfaces.Handlers;
 using DevSync.Models;
 using Microsoft.IdentityModel.Tokens;

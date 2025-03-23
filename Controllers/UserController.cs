@@ -28,8 +28,6 @@ public class UserController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserDto registerRequest)
     {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
-        
         var existingUser = await _userService.FindUserByEmailAsync(registerRequest.Email);
         if(existingUser != null) return Conflict(new { Message = "User with this email already exists." });
 
@@ -49,7 +47,6 @@ public class UserController : Controller
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
        var user = await _userService.FindUserByEmailAsync(loginRequest.Email); 
        if(user?.PasswordHash == null) return Unauthorized();
        

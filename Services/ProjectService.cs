@@ -1,4 +1,3 @@
-using DevSync.Interfaces;
 using DevSync.Interfaces.Repositories;
 using DevSync.Interfaces.Services;
 using DevSync.Models;

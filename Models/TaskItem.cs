@@ -14,7 +14,7 @@ public class TaskItem
 
 public enum TaskItemStatus
 {
-    Pending,
-    InProgress,
-    Completed,
+    Pending = 0,
+    InProgress = 1,
+    Completed = 2,
 }

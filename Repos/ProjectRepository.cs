@@ -1,5 +1,4 @@
 using DevSync.Contexts;
-using DevSync.Interfaces;
 using DevSync.Interfaces.Repositories;
 using DevSync.Models;
 using Microsoft.EntityFrameworkCore;

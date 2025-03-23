@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using DevSync.Interfaces;
 using DevSync.Interfaces.Services;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace DevSync.Services;
 

@@ -1,9 +1,10 @@
-using DevSync.Interfaces;
 using DevSync.Interfaces.Services;
 using DevSync.Models;
 using DevSync.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using DevSync.Features.Projects.Queries;
 
 namespace DevSync.Controllers;
 
@@ -13,11 +14,13 @@ public class ProjectController : Controller
 {
     private readonly IProjectService _projectService;
     private readonly IClaimsService _claimsService;
+    private readonly IMediator _mediator;
 
-    public ProjectController(IProjectService projectService, IClaimsService claimsService)
+    public ProjectController(IProjectService projectService, IClaimsService claimsService, IMediator mediator)
     {
         _projectService = projectService;
         _claimsService = claimsService;
+        _mediator = mediator;
     }
     
     [HttpGet]
@@ -25,10 +28,16 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetAllUserProjects()
     {
         var userId = _claimsService.GetUserId();
-        if (userId == null) return Unauthorized(new { Message = "Invalid token" });
+        if (userId == null) return Unauthorized();
 
-        var projects = await _projectService.GetAllUserProjects(userId.Value);
-        return Ok(projects);
+        var projects = await _mediator.Send(new GetAllUserProjectsQuery(userId.Value));
+        return Ok(projects.Select(p => new ProjectResponseDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            CreatedAt = p.CreatedAt
+        }));
     }
 
     [HttpPost]
