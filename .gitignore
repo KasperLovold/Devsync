@@ -1,3 +1,27 @@
+#dotnet
 bin
 obj
 appsettings.json
+
+# frontend
+DevSyncFE/logs
+DevSyncFE/*.log
+DevSyncFE/npm-debug.log*
+DevSyncFE/yarn-debug.log*
+DevSyncFE/yarn-error.log*
+DevSyncFE/pnpm-debug.log*
+DevSyncFE/lerna-debug.log*
+DevSyncFE/node_modules
+DevSyncFE/dist
+DevSyncFE/dist-ssr
+DevSyncFE/*.local
+DevSyncFE/# Editor directories and files
+DevSyncFE/.vscode/*
+DevSyncFE/!.vscode/extensions.json
+DevSyncFE/.idea
+DevSyncFE/.DS_Store
+DevSyncFE/*.suo
+DevSyncFE/*.ntvs*
+DevSyncFE/*.njsproj
+DevSyncFE/*.sln
+DevSyncFE/*.sw?
