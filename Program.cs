@@ -8,6 +8,7 @@ using DevSync.Interfaces.Services;
 using DevSync.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using DevSync.Middlewares;
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,6 +76,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+
+app.UseMiddleware<JwtFromCookieMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

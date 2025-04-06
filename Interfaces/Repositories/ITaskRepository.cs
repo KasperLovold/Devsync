@@ -9,5 +9,4 @@ public interface ITaskRepository
    public Task<TaskItem> CreateTask(TaskItem task);
    public Task<TaskItem> UpdateTask(TaskItem task);
    public Task<bool> DeleteTask(Guid taskId);
-   
 }

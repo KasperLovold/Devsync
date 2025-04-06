@@ -359,7 +359,7 @@ export default function ProjectDetails() {
       {/* Task Detail Modal */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {selectedTask && (
-          <div className="space-y-4">
+          <div className="space-y-4 w-[24rem]">
             <div>
               {selectedTask.id ? (
                 <h2 className="text-xl font-bold text-gray-900">Edit Task</h2>

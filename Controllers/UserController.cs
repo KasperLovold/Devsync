@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using DevSync.Models.Enums;
 
 namespace DevSync.Controllers;
 
@@ -17,12 +18,17 @@ public class UserController : Controller
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
     private readonly IJwtHandler _jwtHandler;
+    private readonly IClaimsService _claimsService;
 
-    public UserController(ILogger<UserController> logger, IUserService userService, IJwtHandler jwtHandler)
+    public UserController(ILogger<UserController> logger, 
+                          IUserService userService, 
+                          IJwtHandler jwtHandler,
+                          IClaimsService claimsService)
     {
         _userService = userService;
         _jwtHandler = jwtHandler;
         _logger = logger;
+        _claimsService = claimsService;
     }
 
     [HttpPost("register")]
@@ -39,7 +45,7 @@ public class UserController : Controller
         
         var hashedPw = _userService.HashPassword(user, registerRequest.Password);
         user.PasswordHash = hashedPw;
-        
+
         await _userService.CreateUserAsync(user);
         return Ok(new { Message = "User created successfully." });
     }
@@ -55,6 +61,18 @@ public class UserController : Controller
 
        var token = _jwtHandler.GenerateToken(user);
        if(token == null) return Unauthorized();
+
+       if(_claimsService.GetClientType() is ClientType.Web) {
+           Response.Cookies.Append("accessToken", _jwtHandler.GenerateKey(token), new CookieOptions
+           {
+               HttpOnly = true,
+               Secure = false,
+               SameSite = SameSiteMode.None,
+               Expires = DateTimeOffset.UtcNow.AddDays(7)
+           });
+
+           return Ok(new { Message = "Login successful." });
+       }
 
        return Ok(new { token = _jwtHandler.GenerateKey(token), iss = token.IssuedAt, expires = token.ValidTo });
     }

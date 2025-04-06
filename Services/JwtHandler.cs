@@ -39,7 +39,6 @@ public class JwtHandler : IJwtHandler
             expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: credentials
         );
-
     }
 
     public string GenerateKey(JwtSecurityToken token) => new JwtSecurityTokenHandler().WriteToken(token);
